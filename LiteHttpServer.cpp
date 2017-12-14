@@ -97,6 +97,7 @@ void LiteHttpServer::start(bool is_ipv4)
 void LiteHttpServer::stop()
 {
     _stop = true;
+    wake_up();
 }
 
 void LiteHttpServer::loop()
@@ -238,6 +239,10 @@ void LiteHttpServer::read_handler(int fd)
 
                 auto resp_content = make_http_resp(request_parser->request,content.data(),content.size());
                 ::write(fd,resp_content.data(),resp_content.size());
+            }
+            else if (request_parser->request.uri == "/updata")
+            {
+
             }
             this->shutdown(fd);
             return;
