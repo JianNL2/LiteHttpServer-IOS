@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD 11)
 
 aux_source_directory(. DIR_SRCS)
 
-add_executable(LiteHttpServer ${DIR_SRCS} main.cpp LiteHttpServer.cpp LiteHttpServer.h)
+add_executable(LiteHttpServer ${DIR_SRCS} main.cpp LiteHttpServer.cpp LiteHttpServer.h StringHelper.h)

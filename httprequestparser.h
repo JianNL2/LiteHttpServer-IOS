@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include "HttpRequest.h"
+#include "StringHelper.h"
 
 
 class HttpRequestParser
@@ -33,6 +34,7 @@ public:
 
 public:
     HttpRequest request;
+    std::string filename;
 
 private:
     static bool checkIfConnection(const HttpRequest::HeaderItem &item)
@@ -370,14 +372,27 @@ private:
                 }
                 break;
             case PostBoundaryLine1:
+                //TODO ugly parse
                 contentSize --;
-                if (input == '\n')
+                if (input == '\n') {
                     state = PostBoundaryLine2;
+                }
                 break;
             case PostBoundaryLine2:
                 contentSize --;
-                if (input == '\n')
+                _content_name_line.push_back(input);
+                if (input == '\n') {
                     state = PostBoundaryLine3;
+                    auto split1 = split_str(_content_name_line, ';');
+                    if (split1.size() > 0) {
+                        auto split2 = split_str(split1.back(), '=');
+                        if (split2.size() >= 2 && trim_str(split2[0]) == "filename") {
+                            filename = split2.back();
+                            filename.erase(0,filename.find_first_not_of('"'));
+                            filename.erase(filename.rfind('"'));
+                        }
+                    }
+                }
                 break;
             case PostBoundaryLine3:
                 contentSize --;
@@ -641,6 +656,8 @@ private:
     std::string chunkSizeStr;
     size_t chunkSize;
     bool chunked;
+private:
+    std::string _content_name_line;
 };
 
 typedef std::shared_ptr<HttpRequestParser> HttpRequestParserPtr;

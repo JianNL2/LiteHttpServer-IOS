@@ -24,6 +24,7 @@ class LiteHttpServer
 public:
     typedef std::function<void (int)> Handler;
     typedef std::function<void ()> Functor;
+    typedef std::function<void (char *,int,char *,int)> UploadCompleteCallback;
 public:
     LiteHttpServer(const std::string & address,uint32_t port):_address(address),_port(port),_stop(false)
     {
@@ -39,6 +40,8 @@ public:
     void start(bool is_ipv4 = true);
     void stop();
     void dispatch(Functor func);
+
+    void setUpCompleteCallback(UploadCompleteCallback cb) {_upCompCb = cb;}
 
 private:
     std::string _address;
@@ -59,6 +62,7 @@ private:
 
     std::mutex _mutex;
 
+    UploadCompleteCallback _upCompCb;
 
 private:
     // event loop

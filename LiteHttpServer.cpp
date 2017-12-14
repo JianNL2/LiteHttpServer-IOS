@@ -231,7 +231,7 @@ void LiteHttpServer::read_handler(int fd)
                 ss << "<body>\n"
                    << "<form action=\"uploaddata\" method=\"post\" enctype=\"multipart/form-data\">\n"
                    << "<input type=\"file\" name=\"fileUpload\" />\n"
-                   << "<input type=\"submit\" value=\"上传文件\" />\n"
+                   << "<input type=\"submit\" value=\"Upload File\" />\n"
                    << "</form>\n"
                    << "</body>";
 
@@ -240,9 +240,20 @@ void LiteHttpServer::read_handler(int fd)
                 auto resp_content = make_http_resp(request_parser->request,content.data(),content.size());
                 ::write(fd,resp_content.data(),resp_content.size());
             }
-            else if (request_parser->request.uri == "/updata")
+            else if (request_parser->request.uri == "/uploaddata")
             {
+                std::stringstream ss;
 
+                ss << "upload suc\n";
+
+                std::string content = ss.str();
+
+                auto resp_content = make_http_resp(request_parser->request,content.data(),content.size());
+                ::write(fd,resp_content.data(),resp_content.size());
+                _upCompCb(request_parser->request.content.data(),
+                          request_parser->request.content.size(),
+                          request_parser->filename.data(),
+                          request_parser->filename.length());
             }
             this->shutdown(fd);
             return;

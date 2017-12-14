@@ -56,6 +56,9 @@ int main() {
 
     std::thread thread1([](){
         LiteHttpServer server("0.0.0.0",8080);
+        server.setUpCompleteCallback([](char * data,int data_len,char * name,int name_len){
+            int c = 1;
+        });
         server.start();
     });
 
